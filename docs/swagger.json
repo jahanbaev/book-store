@@ -1,0 +1,173 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Bookstore API",
+    "version": "1.0.0",
+    "description": "API для покупки книг и админки"
+  },
+  "components": {
+  "securitySchemes": {
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT"
+    }
+    }
+    },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Регистрация пользователя",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Успешная регистрация" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Логин пользователя",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "JWT токен" }
+        }
+      }
+    },
+    "/api/books": {
+      "get": {
+        "summary": "Список книг",
+        "responses": {
+          "200": { "description": "Массив книг" }
+        }
+      }
+    },
+    "/api/books/buy/{id}": {
+      "post": {
+        "summary": "Купить книгу",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cardNumber": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Успешная покупка" },
+          "402": { "description": "Оплата не прошла" }
+        }
+      }
+    },
+"/api/admin/stats": {
+  "get": {
+    "summary": "Получить статистику",
+    "description": "Только для админа. Показывает количество пользователей, книг и забаненных.",
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Успешный ответ",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "users": { "type": "integer" },
+                "bannedUsers": { "type": "integer" },
+                "books": { "type": "integer" }
+              }
+            }
+          }
+        }
+      },
+      "403": {
+        "description": "Доступ запрещен"
+      }
+    }
+  }
+},
+"/api/admin/ban/{id}": {
+  "post": {
+    "summary": "Забанить пользователя",
+    "description": "Админ блокирует пользователя по ID.",
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Пользователь забанен",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "403": { "description": "Доступ запрещен" },
+      "404": { "description": "Пользователь не найден" }
+    }
+  }
+}
+
+  }
+}

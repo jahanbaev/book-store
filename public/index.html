@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Вход в Книжный магазин</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+    <h1 class="text-2xl font-bold mb-4">🔐 Вход / Регистрация</h1>
+    <input id="username" type="text" placeholder="Логин" class="w-full p-2 mb-2 border rounded" />
+    <input id="password" type="password" placeholder="Пароль" class="w-full p-2 mb-4 border rounded" />
+    <div class="flex gap-2">
+      <button onclick="auth('register')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Регистрация</button>
+      <button onclick="auth('login')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Вход</button>
+    </div>
+  </div>
+
+  <script>
+    function auth(type) {
+      fetch(`/api/auth/${type}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: document.getElementById("username").value,
+          password: document.getElementById("password").value
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          window.location.href = '/books.html';
+        } else {
+          alert(data.message || 'Ошибка');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
